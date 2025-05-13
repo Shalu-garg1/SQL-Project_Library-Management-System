@@ -14,8 +14,6 @@ VALUES
 ('C119', 'John', '143 Main St', '2024-05-01');
 
 
-
--- Insert values into each branch table
 INSERT INTO branch(branch_id, manager_id, branch_address, contact_no) 
 VALUES
 ('B001', 'E109', '123 Main St', '+919099988676'),
@@ -25,8 +23,6 @@ VALUES
 ('B005', 'E110', '890 Maple St', '+919099988680');
 
 
-
--- Insert values into each employees table
 INSERT INTO employees(emp_id, emp_name, position, salary, branch_id) 
 VALUES
 ('E101', 'John Doe', 'Clerk', 60000.00, 'B001'),
@@ -43,7 +39,6 @@ VALUES
 
 
 
--- Inserting into books table 
 INSERT INTO books(isbn, book_title, category, rental_price, status, author, publisher) 
 VALUES
 ('978-0-553-29698-2', 'The Catcher in the Rye', 'Classic', 7.00, 'yes', 'J.D. Salinger', 'Little, Brown and Company'),
@@ -83,7 +78,6 @@ VALUES
 ('978-0-7432-7356-4', 'The Hobbit', 'Fantasy', 7.00, 'yes', 'J.R.R. Tolkien', 'Houghton Mifflin Harcourt');
 
 
--- inserting into issued table
 INSERT INTO issued_status(issued_id, issued_member_id, issued_book_name, issued_date, issued_book_isbn, issued_emp_id) 
 VALUES
 ('IS106', 'C106', 'Animal Farm', '2024-03-10', '978-0-330-25864-8', 'E104'),
@@ -123,7 +117,6 @@ VALUES
 ('IS140', 'C110', 'Animal Farm', '2024-04-13', '978-0-330-25864-8', 'E102');
 
 
--- inserting into return table
 INSERT INTO return_status(return_id, issued_id, return_date) 
 VALUES
 ('RS101', 'IS101', '2023-06-06'),
@@ -144,15 +137,6 @@ VALUES
 ('RS116', 'IS118', '2024-05-25'),
 ('RS117', 'IS119', '2024-05-27'),
 ('RS118', 'IS120', '2024-05-29');
-
-
-SELECT * FROM members;
-SELECT * FROM branch;
-SELECT * FROM employees;
-SELECT * FROM books;
-SELECT * FROM return_status;
-
-SELECT * FROM issued_status;
 
 
 DELETE FROM Return_status
