@@ -69,49 +69,40 @@ SELECT * FROM members;
 
 /*PROBLEM STATEMENTS*/
 
---Task 1. Create a New Book Record
+--Task 1. Create a New Book Record:
 INSERT INTO Books(isbn, book_title, category, rental_price, status, author, publisher)
 VALUES('978-1-60129-456-2', 'To Kill a Mockingbird', 'Classic', 6.00, 'yes', 'Harper Lee', 'J.B. Lippincott & Co.');
 
---Task 2: Update an Existing Member's Address
+--Task 2: Update an Existing Member's Address:
 UPDATE Members
 SET member_address = '333 Mall Road'
 WHERE member_id = 'C119';
 
---Task 3: Delete a Record from the Issued Status Table
+--Task 3: Delete a Record from the Issued Status Table:
 DELETE FROM Issued_Status
 WHERE issued_id  = 'IS121';
 
---Task 4: Retrieve All Books Issued by a Specific Employee
+--Task 4: Retrieve All Books Issued by a Specific Employee:
 SELECT * 
 FROM Issued_Status
 WHERE issued_emp_id = 'E102';
 
---Task 5: List Members Who Have Issued More Than One Book
+--Task 5: List Members Who Have Issued More Than One Book:
 SELECT issued_member_id, COUNT(issued_member_id) as 'Books Issued'
 FROM Issued_Status
 GROUP BY issued_member_id
 HAVING COUNT(issued_member_id) > 1;
 
-
---Task 6:Create a new table based on query results - name of the book issued and the total number of times each book is issued.
+--Task 6:Create a new table based on query results - name of the book issued and the total number of times each book is issued:
 CREATE TABLE BookIssue_Count(
 Issued_book_name VARCHAR(75),
 IssueCount INT
 );
 
-SELECT i.issued_book_name, COUNT(Issued_book_name) as 'IssueCount' 
-INTO BookIssue_Count
-FROM Books as b
-JOIN Issued_Status as I
-ON  b.isbn = I.issued_book_isbn
-GROUP BY i.issued_book_name;
-/*OR*/
 SELECT issued_book_name, COUNT(Issued_book_name) as 'Issued.Count' 
 INTO BookIssue_Count
 FROM Issued_Status
 GROUP BY issued_book_name;
-
 
 SELECT * FROM BookIssue_Count;
 
@@ -134,14 +125,13 @@ SELECT *
 FROM Members
 WHERE reg_date > (GETDATE() - 400);
 
---Task 10: **List Employees with Their Branch Manager's Name and their branch details**
+--Task 10:List Employees with their Branch Manager's Name and their branch details:
 SELECT E.Emp_name,e.Emp_id,e.Position,b.branch_id,b.manager_id,E2.Emp_name AS MANAGERNAME
 FROM Employees E
 JOIN Branch B
 ON B.branch_id = E.Branch_id
 JOIN Employees E2
 ON E2.Emp_id = B.manager_id;
-
 
 --Task 11.Create a Table of Books with Rental Price Above a Certain Threshold:
 SELECT book_title,rental_price
@@ -151,27 +141,13 @@ WHERE rental_price > 7;
 
 SELECT * FROM HIGH_RENTAL_BOOKS
 
---Task 12:Retrieve the List of Books Not Yet Returned
+--Task 12:Retrieve the List of Books Not Yet Returned:
 SELECT I.issued_id, R.RETURN_ID,I.issued_member_id,i.issued_book_name
 FROM Issued_Status I
 LEFT JOIN Return_Status R 
 ON I.issued_id = R.issued_id
 WHERE R.return_id IS NULL;
 
-
-
-SELECT I.issued_id, R.RETURN_ID,I.issued_member_id,i.issued_book_name
-FROM Issued_Status I
-LEFT JOIN Return_Status R 
-ON I.issued_id = R.issued_id
-WHERE R.return_id IS NOT NULL;
-
-SELECT *
-FROM Issued_Status I
-LEFT JOIN Return_Status R
-ON I.issued_id = R.issued_id;
-
-SELECT GETDATE()
 
 --Task 13: Identify Members with Overdue Books:
 SELECT I.issued_id,I.issued_book_name,I.issued_date,R.return_id,R.return_date,M.member_name, DATEDIFF(DAY, I.ISSUED_DATE, CAST(GETDATE() AS DATE)) AS Overdue_Days
@@ -181,38 +157,8 @@ ON I.issued_id = R.issued_id
 LEFT JOIN Members M
 ON I.issued_member_id = M.member_id
 WHERE R.return_id IS NULL AND DATEDIFF(DAY, I.ISSUED_DATE, CAST(GETDATE() AS DATE)) >= 60
-/*OR*/
-SELECT I.issued_member_id,M.member_name,B.book_title,I.issued_date,R.return_date,DATEDIFF(DAY, I.issued_date, CAST(GETDATE() AS date)) AS OVERDUE_DAYS
-FROM Issued_Status I
-LEFT JOIN Return_Status R 
-ON I.issued_id = R.issued_id
-JOIN Members M
-ON M.member_id = I.issued_member_id
-JOIN Books B
-ON B.isbn = I.issued_book_isbn
-WHERE R.return_date IS NULL AND DATEDIFF(DAY, I.issued_date, CAST(GETDATE() AS date)) >30
-ORDER BY I.issued_member_id;
 
-/*Task 14: Update Book Status on Return**  
-Write a query to update the status of books in the books table to "Yes" when they are returned (based on entries in the return_status table).
-Workings:
-SELECT I.issued_id,I.issued_book_isbn,I.issued_book_name,I.issued_date,R.return_date,R.return_id,B.status
-FROM Issued_Status I
-LEFT JOIN Return_Status R 
-ON I.issued_id = R.issued_id
-LEFT JOIN Books B
-ON I.issued_book_isbn = B.isbn
-WHERE R.return_date IS NOT NULL
-*/
-
-
---Task 15: Branch Performance Report.Create a query that generates a performance report for each branch, showing the number of books issued, the number of books returned, and the total revenue generated from book rentals.
-
-SELECT * FROM Branch
-SELECT * FROM Issued_Status
-sELECT * FROM Return_Status
-SELECT * FROM Books
-SELECT * FROM Members
+--Task 14: Branch Performance Report.Create a query that generates a performance report for each branch, showing the number of books issued, the number of books returned, and the total revenue generated from book rentals:
 
 WITH Branch_Report AS
 (SELECT ist.issued_id,ist.issued_date,ist.issued_book_name,R.return_id,R.return_date,B.rental_price,Br.branch_id
@@ -229,8 +175,7 @@ SELECT Branch_id, COUNT(issued_id) AS No_of_Books_Issued, COUNT(return_id) AS No
 FROM Branch_Report
 GROUP BY branch_id
 
-
---Task 16: CTAS: Create a new table 'Active_members' containing members who have borrowed at least one book in the last 2 months.
+--Task 15:Create a new table 'Active_members' containing members who have borrowed at least one book in the last 2 months:
 
 DROP TABLE IF EXISTS Active_Members;
 SELECT M.member_id,M.member_name,ist.issued_id,ist.issued_date,ist.issued_book_name,DATEDIFF(day,Ist.issued_date,GETDATE()) AS LatestActivityDays INTO Active_Members
@@ -241,9 +186,7 @@ LEFT JOIN Members M
 ON Ist.issued_member_id = M.member_id
 WHERE DATEDIFF(day,Ist.issued_date,GETDATE()) <= 60
 
-SELECT * FROM Active_Members
-
---**Task 17: Find the top 3 Employees who have issued the highest number of books. Display the employee name, number of books processed, and their branch.
+--Task 16: Find the top 3 Employees who have issued the highest number of books. Display the employee name, number of books processed, and their branch:
 
 SELECT TOP 3 E.Emp_name, E.Emp_id,  COUNT(Ist.issued_id) Books_Processed, E.Branch_id
 FROM Issued_Status Ist
@@ -253,28 +196,6 @@ LEFT JOIN Branch Br
 ON E.Branch_id = Br.branch_id
 GROUP BY E.Emp_name,E.Emp_id,E.Branch_id
 ORDER BY COUNT(Ist.issued_id) DESC
-
-
---Task 18: Write a query to identify members who have issued books more than twice with the status "damaged" in the books table. Display the member name, book title, and the number of times they've issued damaged books. 
-
-
-SELECT M.member_name,M.member_id,I.issued_id,I.issued_book_name,I.issued_date,R.Book_quality
-
-FROM Issued_Status I
-LEFT JOIN Return_Status R
-ON I.issued_id = R.issued_id
-LEFT JOIN Members M
-ON I.issued_member_id = M.member_id
-LEFT JOIN Return_Status R2
-ON I.issued_book_name = R.
-
-
-
-SELECT 
-FROM Issued_Status I
-LEFT JOIN Return_Status R
-ON I.issued_id = R.issued_id
-
 
 
 
